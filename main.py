@@ -1,9 +1,18 @@
 from typing import Optional, List
-
-from fastapi import FastAPI
+from fastapi import FastAPI, Path, Query
 from pydantic import BaseModel
 
-app = FastAPI()
+app = FastAPI(title="Fast API LMS",
+              description="LMS for managing students and courses.",
+              version="0.0.1",
+              contact={
+                  "name": "Bakha",
+                  "email": "bax@example.com",
+              },
+              license_info={
+                  "name": "MIT",
+                  "url": ""
+              })
 
 users = []
 
@@ -20,3 +29,10 @@ async def get_users():
 async def create_user(user: User):
     users.append(user)
     return "Success"
+
+@app.get("/users/{id}")
+async def get_user(
+    id: int = Path(..., description="The Id of the user you want to retrieve.", gt=2),
+    q: str = Query(None, max_length=5)
+):
+    return { "user": users[id], "query": q }
